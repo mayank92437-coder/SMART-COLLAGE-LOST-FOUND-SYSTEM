@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Smart College Lost & Found</title>
+  <style>
+    :root {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      --bg: #fafafa;
+      --card: #fff;
+      --tx: #262626;
+      --mu: #8e8e8e;
+      --bd: #dbdbdb;
+      --pr: #0095f6;
+      --lost: #ed4956;
+      --found: #00a86b;
+      --ig: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)
+    }
+
+    @media(prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #000;
+        --card: #000;
+        --tx: #f5f5f5;
+        --mu: #a8a8a8;
+        --bd: #262626
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #000;
+      --card: #000;
+      --tx: #f5f5f5;
+      --mu: #a8a8a8;
+      --bd: #262626
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--tx);
+      font: 14px/1.45 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif
+    }
+
+    .wrap {
+      max-width: 470px;
+      margin: 0 auto;
+      padding: 0 0 90px
+    }
+
+    header {
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      z-index: 5;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--bd)
+    }
+
+    h1 {
+      font: 600 22px/1 "Billabong", "Brush Script MT", cursive, serif;
+      margin: 0;
+      background: var(--ig);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 26px
+    }
+
+    h1 small {
+      display: none
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+      color: var(--tx)
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      background: var(--bg)
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 14px;
+      background: var(--pr);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    button.g {
+      background: transparent;
+      color: var(--tx);
+      border: 1px solid var(--bd)
+    }
+
+    #college {
+      width: auto;
+      max-width: 150px;
+      padding: 6px 8px;
+      font-weight: 600
+    }
+
+    .stories {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--bd);
+      scrollbar-width: none
+    }
+
+    .story {
+      flex: 0 0 auto;
+      width: 66px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 11px
+    }
+
+    .ring {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      padding: 3px;
+      background: var(--bd);
+      margin: 0 auto 4px
+    }
+
+    .story.on .ring {
+      background: var(--ig)
+    }
+
+    .ring i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--bg);
+      font-style: normal;
+      font-size: 26px
+    }
+
+    .bar {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px
+    }
+
+    .bar input {
+      flex: 1
+    }
+
+    .tabs {
+      display: flex;
+      border-top: 1px solid var(--bd);
+      border-bottom: 1px solid var(--bd)
+    }
+
+    .tabs button {
+      flex: 1;
+      background: transparent;
+      color: var(--mu);
+      border-radius: 0;
+      border-top: 1px solid transparent;
+      margin-top: -1px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .tabs button.on {
+      color: var(--tx);
+      border-top-color: var(--tx)
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 14px
+    }
+
+    .stat {
+      text-align: center
+    }
+
+    .stat b {
+      display: block;
+      font-size: 17px
+    }
+
+    .stat span {
+      color: var(--mu);
+      font-size: 13px
+    }
+
+    #cat {
+      display: none
+    }
+
+    .grid {
+      display: flex;
+      flex-direction: column
+    }
+
+    .card {
+      background: var(--card);
+      border-bottom: 1px solid var(--bd);
+      padding-bottom: 10px;
+      margin-bottom: 6px
+    }
+
+    .hd {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px
+    }
+
+    .av {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--ig);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex: 0 0 auto
+    }
+
+    .hd b {
+      display: block;
+      font-size: 14px;
+      line-height: 1.2
+    }
+
+    .hd .mu {
+      font-size: 12px
+    }
+
+    .hd .tag {
+      margin-left: auto
+    }
+
+    .card img,
+    .ph {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      background: linear-gradient(135deg, #fdf1f6, #eef1ff)
+    }
+
+    @media(prefers-color-scheme:dark) {
+      .ph {
+        background: linear-gradient(135deg, #1a1a1a, #262626)
+      }
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      color: #fff;
+      letter-spacing: .5px
+    }
+
+    .tag.lost {
+      background: var(--lost)
+    }
+
+    .tag.found {
+      background: var(--found)
+    }
+
+    .tag.done {
+      background: var(--mu)
+    }
+
+    .acts {
+      display: flex;
+      gap: 4px;
+      padding: 8px 10px 2px;
+      align-items: center
+    }
+
+    .acts button {
+      background: transparent;
+      color: var(--tx);
+      font-size: 22px;
+      padding: 4px 8px
+    }
+
+    .acts .sp {
+      flex: 1
+    }
+
+    .acts .ct {
+      font-size: 13px;
+      color: #fff;
+      background: var(--pr);
+      padding: 6px 14px
+    }
+
+    .cap {
+      padding: 2px 14px;
+      word-break: break-word
+    }
+
+    .cap b {
+      margin-right: 4px
+    }
+
+    .mu {
+      color: var(--mu);
+      font-size: 13px
+    }
+
+    .uid {
+      margin: 4px 14px 0;
+      font-size: 13px;
+      color: var(--pr)
+    }
+
+    .match {
+      margin: 4px 14px 0;
+      font-size: 13px;
+      color: var(--pr);
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    dialog {
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--tx);
+      width: min(440px, 94vw);
+      padding: 18px
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, .65)
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--mu);
+      margin: 10px 0 3px
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--mu);
+      padding: 50px 20px
+    }
+
+    .fab {
+      position: fixed;
+      right: max(18px, calc(50% - 217px));
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--ig);
+      font-size: 30px;
+      padding: 0;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .35)
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--mu);
+      padding: 10px 14px;
+      text-align: center
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Lost&amp;Found</h1>
+      <div style="display:flex;gap:6px;align-items:center"><select id="college"></select><button class="g"
+          id="newCol">+</button></div>
+    </header>
+    <div class="stories" id="stories"></div>
+    <div class="stats">
+      <div class="stat"><b id="sL">0</b><span>Lost</span></div>
+      <div class="stat"><b id="sF">0</b><span>Found</span></div>
+      <div class="stat"><b id="sR">0</b><span>Returned</span></div>
+    </div>
+    <div class="bar">
+      <div class="tabs" id="tabs"><button data-t="all" class="on">All</button><button data-t="lost">Lost</button><button
+          data-t="found">Found</button></div>
+      <input id="q" placeholder="Search item, color, place, unique mark...">
+      <select id="cat">
+        <option value="">All categories</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="note" id="mode"></div>
+  </div>
+  <button class="fab" id="add" aria-label="Report item">+</button>
+
+  <dialog id="dlg">
+    <form method="dialog" id="f" onsubmit="return false">
+      <h3 style="margin:0">New post</h3>
+      <div class="row">
+        <div><label>I...</label><select id="type">
+            <option value="lost">Lost an item</option>
+            <option value="found">Found an item</option>
+          </select></div>
+        <div><label>Category</label><select id="fcat"></select></div>
+      </div>
+      <label>Item name *</label><input id="name" placeholder="e.g. Black wallet">
+      <label>Description</label><textarea id="desc" placeholder="Color, brand, condition..."></textarea>
+      <label>Unique identifiers (sticker, scratch, name, ID no.)</label><input id="uid"
+        placeholder="e.g. Blue sticker on back, initials 'RK'">
+      <div class="row">
+        <div><label>Place</label><input id="place" placeholder="Library, Canteen..."></div>
+        <div><label>Date</label><input id="date" type="date"></div>
+      </div>
+      <div class="row">
+        <div><label>Your name *</label><input id="who"></div>
+        <div><label>Phone / Email *</label><input id="contact"></div>
+      </div>
+      <label>Photo</label><input id="img" type="file" accept="image/*">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="g"
+          id="cancel">Cancel</button><button id="save">Share</button></div>
+    </form>
+  </dialog>
+
+  <script>
+    var CATS = ["Wallet / Money", "ID / Cards", "Phone / Electronics", "Bag", "Keys", "Books / Notes", "Clothing", "Bottle / Lunch box", "Jewellery", "Other"];
+    var ICON = { "Wallet / Money": "👛", "ID / Cards": "🪪", "Phone / Electronics": "📱", "Bag": "🎒", "Keys": "🔑", "Books / Notes": "📚", "Clothing": "🧥", "Bottle / Lunch box": "🍶", "Jewellery": "💍", "Other": "📦" };
+    var posts = [], colleges = [], tab = "all", db = null, col = null;
+    var $ = function (i) { return document.getElementById(i) };
+    function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML }
+    function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch (e) { return d } }
+    function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) { } }
+    CATS.forEach(function (c) { ["cat", "fcat"].forEach(function (id) { var o = document.createElement("option"); o.value = o.textContent = c; $(id).appendChild(o) }) });
+    $("fcat").value = "Other"; $("date").valueAsDate = new Date();
+
+    /* ---------- data layer: shared db if available, else local ---------- */
+    function setPosts(list) {
+      posts = list.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0) });
+      var set = {}; posts.forEach(function (p) { if (p.college) set[p.college] = 1 });
+      lsGet("colleges", []).forEach(function (c) { set[c] = 1 });
+      colleges = Object.keys(set).sort(); if (!colleges.length) colleges = ["Demo College"]; renderColleges(); render()
+    }
+    async function init() {
+      try { if (window.claude && claude.use) { db = await claude.use("db") } } catch (e) { db = null }
+      if (db) {
+        col = db.collection("posts"); $("mode").textContent = "Live mode: posts are shared with everyone who opens this link.";
+        col.onSnapshot(function (s) { setPosts(s.docs.map(function (d) { var x = d.data(); x.id = d.id; return x })) }, function () { fallback() })
+      }
+      else fallback()
+    }
+    function fallback() { db = null; $("mode").textContent = "Offline demo mode: posts are saved only in this browser."; setPosts(lsGet("posts", [])) }
+    async function savePost(p) {
+      if (db) { try { await col.doc(p.id).set(p); return } catch (e) { alert("Could not save. You may need edit access."); return } }
+      posts.push(p); lsSet("posts", posts); setPosts(posts)
+    }
+    async function patchPost(p, ch) { Object.assign(p, ch); if (db) { try { await col.doc(p.id).update(ch) } catch (e) { alert("Not allowed to update.") } } else { lsSet("posts", posts); render() } }
+
+    /* ---------- UI ---------- */
+    function renderColleges() {
+      var cur = $("college").value || lsGet("curCol", ""); $("college").innerHTML = colleges.map(function (c) { return "<option>" + esc(c) + "</option>" }).join("");
+      $("college").value = colleges.indexOf(cur) > -1 ? cur : colleges[0]
+    }
+    $("college").onchange = function () { lsSet("curCol", this.value); render() };
+    $("newCol").onclick = function () { var n = (prompt("College name?") || "").trim(); if (!n) return; if (colleges.indexOf(n) < 0) colleges.push(n); var l = lsGet("colleges", []); l.push(n); lsSet("colleges", l); renderColleges(); $("college").value = n; lsSet("curCol", n); render() };
+    $("tabs").onclick = function (e) { var t = e.target.dataset.t; if (!t) return; tab = t;[].forEach.call($("tabs").children, function (b) { b.classList.toggle("on", b.dataset.t === t) }); render() };
+    function stories() {
+      var cur = $("cat").value, h = '<div class="story' + (cur ? '' : ' on') + '" data-s=""><div class="ring"><i>🏠</i></div>All</div>';
+      CATS.forEach(function (c) { h += '<div class="story' + (cur === c ? ' on' : '') + '" data-s="' + c + '"><div class="ring"><i>' + ICON[c] + '</i></div>' + c.split(" /")[0] + '</div>' }); $("stories").innerHTML = h
+    }
+    $("stories").onclick = function (e) { var el = e.target.closest(".story"); if (!el) return; $("cat").value = el.dataset.s; stories(); render() }; stories();
+    $("q").oninput = render; $("cat").onchange = render;
+
+    function words(p) { return ((p.name || "") + " " + (p.desc || "") + " " + (p.uid || "")).toLowerCase().split(/[^a-z0-9]+/).filter(function (w) { return w.length > 2 }) }
+    function matches(p) {
+      if (p.done) return []; var w = words(p);
+      return posts.filter(function (o) { return o.college === p.college && o.type !== p.type && !o.done && (o.cat === p.cat) }).map(function (o) {
+        var ow = words(o), n = w.filter(function (x) { return ow.indexOf(x) > -1 }).length; return { o: o, n: n }
+      }).filter(function (m) { return m.n > 0 }).sort(function (a, b) { return b.n - a.n })
+    }
+
+    function render() {
+      var c = $("college").value, q = $("q").value.toLowerCase(), cat = $("cat").value;
+      var mine = posts.filter(function (p) { return p.college === c });
+      $("sL").textContent = mine.filter(function (p) { return p.type === "lost" && !p.done }).length;
+      $("sF").textContent = mine.filter(function (p) { return p.type === "found" && !p.done }).length;
+      $("sR").textContent = mine.filter(function (p) { return p.done }).length;
+      var list = mine.filter(function (p) { return (tab === "all" || p.type === tab) && (!cat || p.cat === cat) && (!q || JSON.stringify([p.name, p.desc, p.uid, p.place, p.cat]).toLowerCase().indexOf(q) > -1) });
+      if (!list.length) { $("grid").innerHTML = '<div class="empty" style="grid-column:1/-1">No items yet. Tap “Report item” to add one.</div>'; return }
+      $("grid").innerHTML = list.map(function (p) {
+        var m = matches(p).length;
+        var ini = esc((p.who || "?").trim().charAt(0).toUpperCase());
+        return '<div class="card"><div class="hd"><div class="av">' + ini + '</div><div><b>' + esc(p.who) + '</b><div class="mu">📍 ' + esc(p.place || "Campus") + '</div></div><span class="tag ' + (p.done ? "done" : p.type) + '">' + (p.done ? "RETURNED" : p.type.toUpperCase()) + '</span></div>' +
+          (p.img ? '<img src="' + esc(p.img) + '" alt="">' : '<div class="ph">' + (ICON[p.cat] || "📦") + '</div>') +
+          '<div class="acts"><button data-m="' + p.id + '" title="Matches">✨' + (m ? '<span style="font-size:13px"> ' + m + '</span>' : '') + '</button>' + (p.done ? '' : '<button data-d="' + p.id + '" title="Mark returned">✅</button>') + '<span class="sp"></span><button class="ct" data-c="' + p.id + '">Contact</button></div>' +
+          '<div class="cap"><b>' + esc(p.name) + '</b>' + esc(p.desc) + '</div>' + (p.uid ? '<div class="uid">🔎 ' + esc(p.uid) + '</div>' : '') +
+          '<div class="mu" style="padding:4px 14px 0">' + esc(p.cat) + ' · ' + esc(p.date || "") + '</div>' + (m ? '<div class="match" data-m="' + p.id + '">View ' + m + ' possible match' + (m > 1 ? 'es' : '') + '</div>' : '') + '</div>'
+      }).join("")
+    }
+
+    function byId(i) { return posts.filter(function (p) { return p.id === i })[0] }
+    $("grid").onclick = function (e) {
+      var t = e.target, id;
+      if (id = t.dataset.c) {
+        var p = byId(id), ct = p.contact || ""; var link = ct.indexOf("@") > -1 ? "mailto:" + ct : "tel:" + ct.replace(/\s/g, "");
+        if (confirm("Contact " + p.who + ": " + ct + "\n\nOK = open phone/email app, Cancel = just copy")) { location.href = link } else { try { navigator.clipboard.writeText(ct) } catch (x) { } }
+      }
+      else if (id = t.dataset.d) { if (confirm("Mark this item as returned?")) patchPost(byId(id), { done: true }) }
+      else if (id = t.dataset.m) { var ms = matches(byId(id)).slice(0, 3); alert("Possible matches:\n\n" + ms.map(function (m) { return "• " + m.o.type.toUpperCase() + ": " + m.o.name + " (" + (m.o.place || "?") + ") - " + m.o.who + ", " + m.o.contact }).join("\n")) }
+    };
+
+    $("add").onclick = function () { $("dlg").showModal() }; $("cancel").onclick = function () { $("dlg").close() };
+    function shrink(file) { return new Promise(function (res) { if (!file) return res(""); var r = new FileReader(); r.onload = function () { var im = new Image(); im.onload = function () { var s = Math.min(1, 480 / Math.max(im.width, im.height)), cv = document.createElement("canvas"); cv.width = im.width * s; cv.height = im.height * s; cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height); res(cv.toDataURL("image/jpeg", .65)) }; im.onerror = function () { res("") }; im.src = r.result }; r.readAsDataURL(file) }) }
+    $("save").onclick = async function () {
+      var name = $("name").value.trim(), who = $("who").value.trim(), ct = $("contact").value.trim();
+      if (!name || !who || !ct) { alert("Please fill item name, your name and contact."); return }
+      $("save").disabled = true;
+      var p = { id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), college: $("college").value, type: $("type").value, cat: $("fcat").value, name: name, desc: $("desc").value.trim(), uid: $("uid").value.trim(), place: $("place").value.trim(), date: $("date").value, who: who, contact: ct, img: await shrink($("img").files[0]), done: false, ts: Date.now() };
+      await savePost(p); $("f").reset(); $("date").valueAsDate = new Date(); $("fcat").value = "Other"; $("save").disabled = false; $("dlg").close()
+    };
+    init();
+  </script>
+</body>
+
+</html>
